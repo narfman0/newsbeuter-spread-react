@@ -1,26 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import Stories from './components/stories';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+const API_ROOT = "http://localhost:5000/api";
+
+class App extends Component {
+  state = {
+    stories: []
+  }
+
+  componentDidMount() {
+    fetch(API_ROOT + '/items/')
+      .then(res => res.json())
+      .then((data) => {
+        this.setState({ stories: data.items })
+      })
+      .catch(console.log)
+  }
+
+  render() {
+    return (
+      <Stories stories={this.state.stories} />
+    )
+  }
 }
 
 export default App;
