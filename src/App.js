@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 const axios = require('axios')
 
-const API_ROOT = "http://localhost:5000/api";
+const API_ROOT = process.env.API_ROOT || "http://localhost:5000/api";
+const SHOW_BODY = process.env.SHOW_BODY || false;
 
 function StoryBody(props) {
-  if (props.showBody) {
+  if (SHOW_BODY) {
     return <p className="card-text">{props.story.content}></p>;
   }
   return null;
@@ -14,7 +15,6 @@ function StoryBody(props) {
 class App extends Component {
   state = {
     stories: [],
-    showBody: false,
   }
 
   componentDidMount() {
@@ -46,7 +46,7 @@ class App extends Component {
                   <div>{story.author}</div>
                   <div>{story.pub_date}</div>
               </h6>
-              <StoryBody story={story} showBody={this.state.showBody} />
+              <StoryBody story={story} />
               <a href={story.url} className="card-link">Card link</a>
               <a href="#" className="card-link" onClick={() => this.handleMarkRead(story.id)}>Mark read</a>
               </div>
