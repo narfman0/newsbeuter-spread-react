@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
-import Stories from './components/stories';
 import './App.css';
+const axios = require('axios')
 
 const API_ROOT = "http://localhost:5000/api";
 
+function StoryBody(props) {
+  if (props.showBody) {
+    return <p className="card-text">{props.story.content}></p>;
+  }
+  return null;
+}
+
 class App extends Component {
   state = {
-    stories: []
+    stories: [],
+    showBody: false,
   }
 
   componentDidMount() {
@@ -18,10 +26,34 @@ class App extends Component {
       .catch(console.log)
   }
 
+  handleMarkRead(storyId) {
+    axios.delete(API_ROOT + '/items/' + storyId + "/")
+      .then((response) => {
+        this.setState({stories: this.state.stories.filter(function(story) {
+          return story.id !== storyId;
+        })});
+      })
+  }
+
   render() {
     return (
-      <Stories stories={this.state.stories} />
-    )
+      <div>
+          {this.state.stories.map((story) => (
+          <div className="card" key={story.id}>
+              <div className="card-body">
+              <h5 className="card-title">{story.title}</h5>
+              <h6 className="card-subtitle mb-2 text-muted">
+                  <div>{story.author}</div>
+                  <div>{story.pub_date}</div>
+              </h6>
+              <StoryBody story={story} showBody={this.state.showBody} />
+              <a href={story.url} className="card-link">Card link</a>
+              <a href="#" className="card-link" onClick={() => this.handleMarkRead(story.id)}>Mark read</a>
+              </div>
+          </div>
+          ))}
+      </div>
+    );
   }
 }
 
